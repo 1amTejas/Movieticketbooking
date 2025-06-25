@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMax - Book Movie Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f1a;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e94560;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 16px;
+        }
+
+        nav ul li a:hover {
+            color: #e94560;
+        }
+
+        .auth-buttons a {
+            padding: 8px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 15px;
+            transition: all 0.3s;
+        }
+
+        .auth-buttons .login {
+            color: #fff;
+            border: 1px solid #e94560;
+        }
+
+        .auth-buttons .login:hover {
+            background-color: #e94560;
+        }
+
+        .auth-buttons .signup {
+            background-color: #e94560;
+            color: #fff;
+        }
+
+        .auth-buttons .signup:hover {
+            background-color: #d13354;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 80px;
+            background: linear-gradient(rgba(15, 15, 26, 0.7), rgba(15, 15, 26, 1)), 
+                        url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #e94560, #ff7b54);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #d13354;
+        }
+
+        /* Now Showing Section */
+        .now-showing {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, #e94560, #ff7b54);
+            border-radius: 2px;
+        }
+
+        .movie-scroll-container {
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .movie-scroll {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 20px;
+            padding: 20px 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .movie-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .movie-card {
+            min-width: 220px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .movie-poster {
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .book-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 0;
+            background-color: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .book-btn:hover {
+            background-color: #d13354;
+        }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .scroll-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .scroll-left {
+            left: -20px;
+        }
+
+        .scroll-right {
+            right: -20px;
+        }
+
+        /* Coming Soon Section */
+        .coming-soon {
+            padding: 60px 0;
+            background: linear-gradient(to bottom, #0f0f1a, #1a1a2e);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a2e;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #e94560;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            background-color: #333;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #e94560;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin: 20px 0;
+            }
+
+            nav ul li {
+                margin: 0 10px;
+            }
+
+            .auth-buttons {
+                margin-top: 15px;
+            }
+
+            .hero {
+                padding: 150px 0 60px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .scroll-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo"><i class="fas fa-film"></i>CineMax</a>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">Theaters</a></li>
+                    <li><a href="#">Offers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="login">Login</a>
+                <a href="#" class="signup">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Book Your Movie Tickets Online</h1>
+            <p>Experience the magic of cinema with the latest blockbusters in stunning quality. Book your seats now and enjoy exclusive offers!</p>
+            <div class="search-box">
+                <input type="text" placeholder="Search for movies, theaters...">
+                <button><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Now Showing Section -->
+    <section class="now-showing">
+        <div class="container">
+            <h2 class="section-title">Now Showing</h2>
+            <div class="movie-scroll-container">
+                <button class="scroll-btn scroll-left"><i class="fas fa-chevron-left"></i></button>
+                <div class="movie-scroll">
+                    <!-- Movie 1 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BMDJmNmYyY2QtNDg5Yi00NGQ1LWExYjEtNDJjNDAxNWYwMGI1XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_.jpg" alt="KGF: Chapter 2" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">KGF: Chapter 2</h3>
+                            <div class="movie-meta">
+                                <span>Action</span>
+                                <span>4.5/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 2 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_FMjpg_UX1000_.jpg" alt="RRR" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">RRR</h3>
+                            <div class="movie-meta">
+                                <span>Action/Drama</span>
+                                <span>4.7/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 3 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BODRlNTY1ZWUtYTM1Zi00YzJkLTkwNzItNzVlODQ5Y2I4OTllXkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_.jpg" alt="Pathaan" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Pathaan</h3>
+                            <div class="movie-meta">
+                                <span>Action/Thriller</span>
+                                <span>4.3/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 4 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BM2RiZDVjYWEtZGNhYy00ZGU3LTk2NmMtOWE0NGJjN2RjNjU3XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Jawan" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Jawan</h3>
+                            <div class="movie-meta">
+                                <span>Action/Thriller</span>
+                                <span>4.6/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 5 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BODcyZDk2Y2EtNTQ3NC00YThjLWIzY2QtNWU5YTQ0Y2I1YjY0XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Vikram" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Vikram</h3>
+                            <div class="movie-meta">
+                                <span>Action/Thriller</span>
+                                <span>4.8/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 6 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_.jpg" alt="Avatar: The Way of Water" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Avatar: The Way of Water</h3>
+                            <div class="movie-meta">
+                                <span>Sci-Fi/Adventure</span>
+                                <span>4.4/5</span>
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="scroll-btn scroll-right"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coming Soon Section -->
+    <section class="coming-soon">
+        <div class="container">
+            <h2 class="section-title">Coming Soon</h2>
+            <div class="movie-scroll-container">
+                <button class="scroll-btn scroll-left"><i class="fas fa-chevron-left"></i></button>
+                <div class="movie-scroll">
+                    <!-- Movie 1 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BNzQ5NzJjMDgtNzhjMC00NTQ2LTgzOTUtZThiMWMwYmYwMGYxXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg" alt="Salaar" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Salaar</h3>
+                            <div class="movie-meta">
+                                <span>Action/Thriller</span>
+                                <span>Coming Soon</span>
+                            </div>
+                            <button class="book-btn">Notify Me</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 2 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BNGIzY2IzNzQtNGQ3OS00MmI5LTk1NjAtZDgxOGY0MzFhZWI0XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Animal" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Animal</h3>
+                            <div class="movie-meta">
+                                <span>Action/Drama</span>
+                                <span>Coming Soon</span>
+                            </div>
+                            <button class="book-btn">Notify Me</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 3 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BZTlmY2U1Y2EtYzE2OC00ZDU1LWI5OTItODkwZDdlM2YxXkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Dunki" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Dunki</h3>
+                            <div class="movie-meta">
+                                <span>Comedy/Drama</span>
+                                <span>Coming Soon</span>
+                            </div>
+                            <button class="book-btn">Notify Me</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 4 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BN2I0MWVhY2ItYjQ0MC00MGE5LWI1ZTItYjViOTQwOTYwNDQ4XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Project K" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Project K</h3>
+                            <div class="movie-meta">
+                                <span>Sci-Fi/Action</span>
+                                <span>Coming Soon</span>
+                            </div>
+                            <button class="book-btn">Notify Me</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 5 -->
+                    <div class="movie-card">
+                        <img src="https://m.media-amazon.com/images/M/MV5BZWI4ZThmY2UtYzcxYy00YjQyLWI1YWItYmM0OWI3OTQ5NzE5XkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_FMjpg_UX1000_.jpg" alt="Fighter" class="movie-poster">
+                        <div class="movie-info">
+                            <h3 class="movie-title">Fighter</h3>
+                            <div class="movie-meta">
+                                <span>Action/Drama</span>
+                                <span>Coming Soo
